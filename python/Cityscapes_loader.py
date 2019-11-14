@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-
-from matplotlib import pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import scipy.misc

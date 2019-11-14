@@ -10,8 +10,9 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
 from fcn import VGGNet, FCN32s, FCN16s, FCN8s, FCNs
-from Cityscapes_loader import CityscapesDataset
+from Cityscapes_loader import CityScapesDataset as CityscapesDataset
 from CamVid_loader import CamVidDataset
+
 
 from matplotlib import pyplot as plt
 import numpy as np
@@ -31,10 +32,10 @@ step_size  = 50
 gamma      = 0.5
 configs    = "FCNs-BCEWithLogits_batch{}_epoch{}_RMSprop_scheduler-step{}-gamma{}_lr{}_momentum{}_w_decay{}".format(batch_size, epochs, step_size, gamma, lr, momentum, w_decay)
 print("Configs:", configs)
-
-if sys.argv[1] == 'CamVid':
+argv1 = 'CamVid'
+if argv1 == 'CamVid':
     root_dir   = "CamVid/"
-else
+else:
     root_dir   = "CityScapes/"
 train_file = os.path.join(root_dir, "train.csv")
 val_file   = os.path.join(root_dir, "val.csv")
@@ -48,13 +49,13 @@ model_path = os.path.join(model_dir, configs)
 use_gpu = torch.cuda.is_available()
 num_gpu = list(range(torch.cuda.device_count()))
 
-if sys.argv[1] == 'CamVid':
+if argv1 == 'CamVid':
     train_data = CamVidDataset(csv_file=train_file, phase='train')
 else:
     train_data = CityscapesDataset(csv_file=train_file, phase='train')
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=8)
 
-if sys.argv[1] == 'CamVid':
+if argv1 == 'CamVid':
     val_data = CamVidDataset(csv_file=val_file, phase='val', flip_rate=0)
 else:
     val_data = CityscapesDataset(csv_file=val_file, phase='val', flip_rate=0)
@@ -115,6 +116,7 @@ def val(epoch):
     total_ious = []
     pixel_accs = []
     for iter, batch in enumerate(val_loader):
+        print('Iteration ',iter)
         if use_gpu:
             inputs = Variable(batch['X'].cuda())
         else:
