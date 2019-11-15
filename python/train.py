@@ -21,9 +21,9 @@ import sys
 import os
 
 
-n_class    = 20
+n_class    = 32
 
-batch_size = 6
+batch_size = 1
 epochs     = 500
 lr         = 1e-4
 momentum   = 0
@@ -98,7 +98,7 @@ def train():
                 inputs, labels = Variable(batch['X']), Variable(batch['Y'])
 
             outputs = fcn_model(inputs)
-            loss = criterion(outputs, labels)
+            loss = criterion(outputs, labels) # Does not work for different n_class in outputs and labels
             loss.backward()
             optimizer.step()
 
@@ -168,5 +168,5 @@ def pixel_acc(pred, target):
 
 
 if __name__ == "__main__":
-    val(0)  # show the accuracy before training
+    # val(0)  # show the accuracy before training
     train()
