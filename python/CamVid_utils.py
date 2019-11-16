@@ -8,6 +8,7 @@ import numpy as np
 import scipy.misc
 import random
 import os
+import imageio
 
 
 #############################
@@ -94,7 +95,8 @@ def parse_label():
             continue
         print("Parse %s" % (name))
         img = os.path.join(label_dir, name)
-        img = scipy.misc.imread(img, mode='RGB')
+        #img = scipy.misc.imread(img, mode='RGB')
+        img = imageio.imread(img, as_gray=False, pilmode="RGB")
         height, weight, _ = img.shape
     
         idx_mat = np.zeros((height, weight))

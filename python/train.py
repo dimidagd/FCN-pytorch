@@ -23,7 +23,7 @@ import os
 
 n_class    = 32
 
-batch_size = 1
+batch_size = 3
 epochs     = 500
 lr         = 1e-4
 momentum   = 0
@@ -50,24 +50,38 @@ use_gpu = torch.cuda.is_available()
 num_gpu = list(range(torch.cuda.device_count()))
 
 if argv1 == 'CamVid':
+    print("Using CamVid dataset")
     train_data = CamVidDataset(csv_file=train_file, phase='train')
 else:
     train_data = CityscapesDataset(csv_file=train_file, phase='train')
+
+print("Running DataLoader from ", train_file)
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=8)
+
+
 
 if argv1 == 'CamVid':
     val_data = CamVidDataset(csv_file=val_file, phase='val', flip_rate=0)
 else:
     val_data = CityscapesDataset(csv_file=val_file, phase='val', flip_rate=0)
+
+print("loading validation file from", val_file)
 val_loader = DataLoader(val_data, batch_size=1, num_workers=8)
 
-vgg_model = VGGNet(requires_grad=True, remove_fc=True)
-fcn_model = FCNs(pretrained_net=vgg_model, n_class=n_class)
 
+print("Loading VGG")
+vgg_model = VGGNet(requires_grad=True, remove_fc=True)
+print("Loading FCN")
+fcn_model = FCNs(pretrained_net=vgg_model, n_class=n_class)
+print("Use GPU :", use_gpu)
 if use_gpu:
+    print("Using GPU, loading cuda shiat")
     ts = time.time()
+    print("Loading vgg on cuda")
     vgg_model = vgg_model.cuda()
+    print("Loading FC on cuda")
     fcn_model = fcn_model.cuda()
+    print("Number of GPUs", num_gpu)
     fcn_model = nn.DataParallel(fcn_model, device_ids=num_gpu)
     print("Finish cuda loading, time elapsed {}".format(time.time() - ts))
 
@@ -85,7 +99,7 @@ pixel_scores = np.zeros(epochs)
 
 def train():
     for epoch in range(epochs):
-        scheduler.step()
+        #scheduler.step()
 
         ts = time.time()
         for iter, batch in enumerate(train_loader):
@@ -97,13 +111,17 @@ def train():
             else:
                 inputs, labels = Variable(batch['X']), Variable(batch['Y'])
 
+            #print("Forward pass")
             outputs = fcn_model(inputs)
+            #print("Loss")
             loss = criterion(outputs, labels) # Does not work for different n_class in outputs and labels
+            #print("Backward pass")
             loss.backward()
+            #print("Optimizing")
             optimizer.step()
-
+            scheduler.step()
             if iter % 10 == 0:
-                print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss.data[0]))
+                print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss.data))
         
         print("Finish epoch {}, time elapsed {}".format(epoch, time.time() - ts))
         torch.save(fcn_model, model_path)
@@ -116,7 +134,7 @@ def val(epoch):
     total_ious = []
     pixel_accs = []
     for iter, batch in enumerate(val_loader):
-        print('Iteration ',iter)
+        #print('Validation Iteration ',iter)
         if use_gpu:
             inputs = Variable(batch['X'].cuda())
         else:
@@ -168,5 +186,7 @@ def pixel_acc(pred, target):
 
 
 if __name__ == "__main__":
-    # val(0)  # show the accuracy before training
+    print('Validating without train')
+    val(0)  # show the accuracy before training
+    print('Starting train loop')
     train()

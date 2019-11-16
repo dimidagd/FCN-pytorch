@@ -5,6 +5,7 @@ from __future__ import print_function
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
+import imageio
 import scipy.misc
 import random
 import os
@@ -51,7 +52,8 @@ class CamVidDataset(Dataset):
 
     def __getitem__(self, idx):
         img_name   = self.data.iloc[idx, 0]
-        img        = scipy.misc.imread(img_name, mode='RGB')
+        #img        = scipy.misc.imread(img_name, mode='RGB')
+        img        = imageio.imread(img_name, as_gray=False, pilmode="RGB")
         label_name = self.data.iloc[idx, 1]
         label      = np.load(label_name)
 
