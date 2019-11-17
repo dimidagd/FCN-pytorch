@@ -15,6 +15,7 @@ from CamVid_loader import CamVidDataset
 
 
 from matplotlib import pyplot as plt
+import pdb
 import numpy as np
 import time
 import sys
@@ -124,6 +125,7 @@ def train():
                 print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss.data))
         
         print("Finish epoch {}, time elapsed {}".format(epoch, time.time() - ts))
+        pdb.set_trace()
         torch.save(fcn_model, model_path)
 
         val(epoch)
@@ -175,13 +177,14 @@ def iou(pred, target):
             ious.append(float('nan'))  # if there is no ground truth, do not include in evaluation
         else:
             ious.append(float(intersection) / max(union, 1))
-        # print("cls", cls, pred_inds.sum(), target_inds.sum(), intersection, float(intersection) / max(union, 1))
+        print("cls", cls, pred_inds.sum(), target_inds.sum(), intersection, float(intersection) / max(union, 1))
     return ious
 
 
 def pixel_acc(pred, target):
     correct = (pred == target).sum()
     total   = (target == target).sum()
+    print("pixel accuracy debug", correct, total)
     return correct / total
 
 
