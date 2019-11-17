@@ -74,6 +74,13 @@ print("Loading VGG")
 vgg_model = VGGNet(requires_grad=True, remove_fc=True)
 print("Loading FCN")
 fcn_model = FCNs(pretrained_net=vgg_model, n_class=n_class)
+
+# if os.path.exists(model_path):
+#
+#     fcn_model = FCNs(pretrained_net=vgg_model, n_class=n_class)
+# else:
+#     fcn_model = torch.load()
+
 print("Use GPU :", use_gpu)
 if use_gpu:
     print("Using GPU, loading cuda shiat")
@@ -125,9 +132,9 @@ def train():
                 print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss.data))
         
         print("Finish epoch {}, time elapsed {}".format(epoch, time.time() - ts))
-        pdb.set_trace()
+        #pdb.set_trace()
         torch.save(fcn_model, model_path)
-        pdb.set_trace()
+        #pdb.set_trace()
         val(epoch)
 
 
