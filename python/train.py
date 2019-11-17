@@ -127,7 +127,7 @@ def train():
         print("Finish epoch {}, time elapsed {}".format(epoch, time.time() - ts))
         pdb.set_trace()
         torch.save(fcn_model, model_path)
-
+        pdb.set_trace()
         val(epoch)
 
 
