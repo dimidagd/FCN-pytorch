@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 
 from fcn import VGGNet, FCN32s, FCN16s, FCN8s, FCNs
 from Cityscapes_loader import CityScapesDataset as CityscapesDataset
-from CamVid_loader import CamVidDataset
+from CamVid_loader import CamVidDataset, show_batch
 
 from matplotlib import pyplot as plt
 import pdb
@@ -124,6 +124,46 @@ if use_gpu:
     print("Number of GPUs", num_gpu)
     fcn_model = nn.DataParallel(fcn_model, device_ids=num_gpu)
     print("Finish cuda loading, time elapsed {}".format(time.time() - ts))
+
+
+#  Initialize from previous models
+if inp == 2 and os.path.exists(model_path.replace("FCN16s", "FCN32s")):
+    inp2 = str(input("Found previously trained FCN32s, put it as initialization point? (y/n) "))
+    if inp2 == 'y':
+        if use_gpu:
+            checkpoint = torch.load(model_path.replace("FCN16s", "FCN32s"))
+        else:
+            checkpoint = torch.load(model_path.replace("FCN16s", "FCN32s"), map_location=torch.device('cpu'))
+        classifier_params = {}
+        classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
+        classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
+        fcn_model.classifier.load_state_dict(classifier_params)
+
+if inp == 1 and os.path.exists(model_path.replace("FCN8s", "FCN16s")):
+    inp2 = str(input("Found previously trained FCN16s, put it as initialization point? (y/n) "))
+    if inp2 == 'y':
+        if use_gpu:
+            checkpoint = torch.load(model_path.replace("FCN8s", "FCN16s"))
+        else:
+            checkpoint = torch.load(model_path.replace("FCN8s", "FCN16s"), map_location=torch.device('cpu'))
+        classifier_params = {}
+        classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
+        classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
+        fcn_model.classifier.load_state_dict(classifier_params)
+
+if inp == 4 and os.path.exists(model_path.replace("FCNs", "FCN8s")):
+    inp2 = str(input("Found previously trained FCN8s, put it as initialization point? (y/n) "))
+    if inp2 == 'y':
+        if use_gpu:
+            checkpoint = torch.load(model_path.replace("FCNs", "FCN8"))
+        else:
+            checkpoint = torch.load(model_path.replace("FCNs", "FCN8s"), map_location=torch.device('cpu'))
+
+        classifier_params = {}
+        classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
+        classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
+        fcn_model.classifier.load_state_dict(classifier_params)
+
 
 
 # Load checkpoint after cuda DataParallel initialization
@@ -249,10 +289,41 @@ def pixel_acc(pred, target):
     #print("pixel accuracy debug", correct, total)
     return correct / total
 
-def heatmaps(batch, predictions):
+#
+# def heat_maps(batch, predictions):
+#     show_batch(batch)
+#
+#     heatmap = np.zeros((*predictions.shape, 3))
+#
+#     r = np.zeros(predictions.shape)
+#     b = 0*r
+#     g = 0*r
+#
+#     label2color = {}
+#     color2label = {}
+#     label2index = {}
+#     index2label = {}
+#
+#     f = open('CamVid/label_colors.txt', "r").read().split("\n")[:-1]  # ignore the last empty line
+#
+#     for idx, line in enumerate(f):
+#         label = line.split()[-1]
+#         color = tuple([int(x) for x in line.split()[:-1]])
+#         print(label, color)
+#         label2color[label] = color
+#         color2label[color] = label
+#         label2index[label] = idx
+#         index2label[idx] = label
+#
+#     heatmap = heatmap.reshape(3, heatmap.shape[1] * heatmap.shape[2])
+#
+#     for i, pixel in enumerate(predictions.squeeze(0)):
+#
+#         heatmap[:,i] = np.array(label2color[index2label[pixel]])
+#
+#     heatmap.reshape((3,*predictions.shape))
 
 
-    return
 
 
 
