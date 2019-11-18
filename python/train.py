@@ -13,7 +13,6 @@ from fcn import VGGNet, FCN32s, FCN16s, FCN8s, FCNs
 from Cityscapes_loader import CityScapesDataset as CityscapesDataset
 from CamVid_loader import CamVidDataset
 
-
 from matplotlib import pyplot as plt
 import pdb
 import numpy as np
@@ -21,28 +20,53 @@ import time
 import sys
 import os
 
-
-n_class    = 32
+n_class = 32
 
 batch_size = 3
-epochs     = 500
-lr         = 1e-4
-momentum   = 0
-w_decay    = 1e-5
-step_size  = 50
-gamma      = 0.5
-configs    = "FCNs-BCEWithLogits_batch{}_epoch{}_RMSprop_scheduler-step{}-gamma{}_lr{}_momentum{}_w_decay{}".format(batch_size, epochs, step_size, gamma, lr, momentum, w_decay)
+epochs = 500
+lr = 1e-4
+momentum = 0
+w_decay = 1e-5
+step_size = 50
+gamma = 0.5
+
+
+
+print("Loading FCN")
+print("Please choose submodel")
+print("1. FCN8s")
+print("2. FCN16s")
+print("3. FCN32s")
+print("4. FCNs")
+inp = int(input(": "))
+
+if inp == 1:
+    submodel = '8'
+elif inp == 2:
+    submodel = '16'
+elif inp == 3:
+    submodel = '32'
+elif inp == 4:
+    submodel =''
+else:
+    print("Invalid input!")
+
+
+configs = "FCN{}s-BCEWithLogits_batch{}_epoch{}_RMSprop_scheduler-step{}-gamma{}_lr{}_momentum{}_w_decay{}".format(submodel,
+    batch_size, epochs, step_size, gamma, lr, momentum, w_decay)
 print("Configs:", configs)
+
 argv1 = 'CamVid'
 if argv1 == 'CamVid':
-    root_dir   = "CamVid/"
+    root_dir = "CamVid/"
 else:
-    root_dir   = "CityScapes/"
+    root_dir = "CityScapes/"
 train_file = os.path.join(root_dir, "train.csv")
-val_file   = os.path.join(root_dir, "val.csv")
+val_file = os.path.join(root_dir, "val.csv")
 
 # create dir for model
 model_dir = "models"
+
 if not os.path.exists(model_dir):
     os.makedirs(model_dir)
 model_path = os.path.join(model_dir, configs)
@@ -59,8 +83,6 @@ else:
 print("Running DataLoader from ", train_file)
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=8)
 
-
-
 if argv1 == 'CamVid':
     val_data = CamVidDataset(csv_file=val_file, phase='val', flip_rate=0)
 else:
@@ -69,17 +91,27 @@ else:
 print("loading validation file from", val_file)
 val_loader = DataLoader(val_data, batch_size=1, num_workers=8)
 
-
 print("Loading VGG")
 vgg_model = VGGNet(requires_grad=True, remove_fc=True)
-print("Loading FCN")
-fcn_model = FCNs(pretrained_net=vgg_model, n_class=n_class)
 
-# if os.path.exists(model_path):
-#
-#     fcn_model = FCNs(pretrained_net=vgg_model, n_class=n_class)
-# else:
-#     fcn_model = torch.load()
+
+if inp == 1:
+    fcn_model = FCN8s(pretrained_net=vgg_model, n_class=n_class)
+elif inp == 2:
+    fcn_model = FCN16s(pretrained_net=vgg_model, n_class=n_class)
+elif inp == 3:
+    fcn_model = FCN32s(pretrained_net=vgg_model, n_class=n_class)
+elif inp == 4:
+    fcn_model = FCNs(pretrained_net=vgg_model, n_class=n_class)
+else:
+    print("Invalid input!")
+
+criterion = nn.BCEWithLogitsLoss()
+optimizer = optim.RMSprop(fcn_model.parameters(), lr=lr, momentum=momentum, weight_decay=w_decay)
+scheduler = lr_scheduler.StepLR(optimizer, step_size=step_size,
+                                gamma=gamma)  # decay LR by a factor of 0.5 every 30 epochs
+start_epoch = 0
+
 
 print("Use GPU :", use_gpu)
 if use_gpu:
@@ -93,21 +125,34 @@ if use_gpu:
     fcn_model = nn.DataParallel(fcn_model, device_ids=num_gpu)
     print("Finish cuda loading, time elapsed {}".format(time.time() - ts))
 
-criterion = nn.BCEWithLogitsLoss()
-optimizer = optim.RMSprop(fcn_model.parameters(), lr=lr, momentum=momentum, weight_decay=w_decay)
-scheduler = lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)  # decay LR by a factor of 0.5 every 30 epochs
+
+# Load checkpoint after cuda DataParallel initialization
+if os.path.exists(model_path):
+    print("Loading checkpoint..")
+    checkpoint = torch.load(model_path)
+    fcn_model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    scheduler.load_state_dict(checkpoint['scheduler'])
+    start_epoch = checkpoint['epoch']
+    loss = checkpoint['loss']
+
+else:
+    start_epoch = 0
+
+
 
 # create dir for score
 score_dir = os.path.join("scores", configs)
 if not os.path.exists(score_dir):
     os.makedirs(score_dir)
-IU_scores    = np.zeros((epochs, n_class))
+IU_scores = np.zeros((epochs, n_class))
 pixel_scores = np.zeros(epochs)
 
 
 def train():
-    for epoch in range(epochs):
-        #scheduler.step()
+    fcn_model.train()  # Reactivate batch norm etc
+    for epoch in range(start_epoch, epochs):
+        # scheduler.step()
 
         ts = time.time()
         for iter, batch in enumerate(train_loader):
@@ -119,31 +164,41 @@ def train():
             else:
                 inputs, labels = Variable(batch['X']), Variable(batch['Y'])
 
-            #print("Forward pass")
+            # print("Forward pass")
             outputs = fcn_model(inputs)
-            #print("Loss")
-            loss = criterion(outputs, labels) # Does not work for different n_class in outputs and labels
-            #print("Backward pass")
+            # print("Loss")
+            loss = criterion(outputs, labels)  # Does not work for different n_class in outputs and labels
+            # print("Backward pass")
             loss.backward()
-            #print("Optimizing")
+            # print("Optimizing")
             optimizer.step()
             scheduler.step()
             if iter % 10 == 0:
                 print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss.data))
-        
+
         print("Finish epoch {}, time elapsed {}".format(epoch, time.time() - ts))
-        #pdb.set_trace()
-        torch.save(fcn_model, model_path)
+        # pdb.set_trace()
+
+        # torch.save(fcn_model, model_path)
+
+        # Alternative save
+        torch.save({
+            'epoch': epoch,
+            'model_state_dict': fcn_model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'scheduler': scheduler.state_dict(),
+            'loss': loss
+        }, model_path)
         #pdb.set_trace()
         val(epoch)
 
 
 def val(epoch):
-    fcn_model.eval()
+    fcn_model.eval()  # Deactivate dropout and batch normalization or inconsistent inference
     total_ious = []
     pixel_accs = []
     for iter, batch in enumerate(val_loader):
-        #print('Validation Iteration ',iter)
+        # print('Validation Iteration ',iter)
         if use_gpu:
             inputs = Variable(batch['X'].cuda())
         else:
@@ -171,7 +226,7 @@ def val(epoch):
     np.save(os.path.join(score_dir, "meanPixel"), pixel_scores)
 
 
-# borrow functions and modify it from https://github.com/Kaixhin/FCN-semantic-segmentation/blob/master/main.py
+# borrow functions and modify it from https://github.com/Kaixhin/FCN-semantic-segmentation/blob/ma ster/main.py
 # Calculates class intersections over unions
 def iou(pred, target):
     ious = []
@@ -184,15 +239,22 @@ def iou(pred, target):
             ious.append(float('nan'))  # if there is no ground truth, do not include in evaluation
         else:
             ious.append(float(intersection) / max(union, 1))
-        print("cls", cls, pred_inds.sum(), target_inds.sum(), intersection, float(intersection) / max(union, 1))
+        #print("cls", cls, pred_inds.sum(), target_inds.sum(), intersection, float(intersection) / max(union, 1))
     return ious
 
 
 def pixel_acc(pred, target):
     correct = (pred == target).sum()
-    total   = (target == target).sum()
-    print("pixel accuracy debug", correct, total)
+    total = (target == target).sum()
+    #print("pixel accuracy debug", correct, total)
     return correct / total
+
+def heatmaps(batch, predictions):
+
+
+    return
+
+
 
 
 if __name__ == "__main__":
