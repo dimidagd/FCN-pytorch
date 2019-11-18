@@ -137,7 +137,10 @@ if inp == 2 and os.path.exists(model_path.replace("FCN16s", "FCN32s")):
         classifier_params = {}
         classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
         classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
-        fcn_model.classifier.load_state_dict(classifier_params)
+        if use_gpu:
+            fcn_model.module.classifier.load_state_dict(classifier_params)
+        else:
+            fcn_model.classifier.load_state_dict(classifier_params)
 
 if inp == 1 and os.path.exists(model_path.replace("FCN8s", "FCN16s")):
     inp2 = str(input("Found previously trained FCN16s, put it as initialization point? (y/n) "))
@@ -149,7 +152,10 @@ if inp == 1 and os.path.exists(model_path.replace("FCN8s", "FCN16s")):
         classifier_params = {}
         classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
         classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
-        fcn_model.classifier.load_state_dict(classifier_params)
+        if use_gpu:
+            fcn_model.module.classifier.load_state_dict(classifier_params)
+        else:
+            fcn_model.classifier.load_state_dict(classifier_params)
 
 if inp == 4 and os.path.exists(model_path.replace("FCNs", "FCN8s")):
     inp2 = str(input("Found previously trained FCN8s, put it as initialization point? (y/n) "))
@@ -162,7 +168,10 @@ if inp == 4 and os.path.exists(model_path.replace("FCNs", "FCN8s")):
         classifier_params = {}
         classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
         classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
-        fcn_model.classifier.load_state_dict(classifier_params)
+        if use_gpu:
+            fcn_model.module.classifier.load_state_dict(classifier_params)
+        else:
+            fcn_model.classifier.load_state_dict(classifier_params)
 
 
 
