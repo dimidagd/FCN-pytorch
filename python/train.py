@@ -5,6 +5,7 @@ from __future__ import print_function
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import argparse
 from torch.optim import lr_scheduler
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
@@ -20,11 +21,14 @@ import time
 import sys
 import os
 
+
+
 n_class = 32
 
 batch_size = 3
 epochs = 500
-lr = 1e-4
+#lr = 1e-4
+lr = 1e-2
 momentum = 0
 w_decay = 1e-5
 step_size = 50
