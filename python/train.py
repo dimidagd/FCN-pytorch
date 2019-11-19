@@ -25,13 +25,13 @@ import os
 
 n_class = 32
 
-batch_size = 6
+batch_size = 10
 epochs = 500
 
 momentum = 0
 w_decay = 1e-5
-step_size = 2
-gamma = 0.7
+step_size = 4
+gamma = 0.9
 
 
 
@@ -224,7 +224,8 @@ if not os.path.exists(score_dir):
     os.makedirs(score_dir)
 IU_scores = np.zeros((epochs, n_class))
 pixel_scores = np.zeros(epochs)
-
+train_loss = np.zeros(epochs)
+learning_rate = np.zeros(epochs)
 
 def train():
     fcn_model.train()  # Reactivate batch norm etc
@@ -232,8 +233,10 @@ def train():
 
         print(optimizer)
         ts = time.time()
+        loss_acc = 0
         for iter, batch in enumerate(train_loader):
-            optimizer.zero_grad()
+
+            optimizer.zero_grad()  # Necessary to reset before optimizer.step()
 
             if use_gpu:
                 inputs = Variable(batch['X'].cuda())
@@ -241,22 +244,24 @@ def train():
             else:
                 inputs, labels = Variable(batch['X']), Variable(batch['Y'])
 
-            # print("Forward pass")
             outputs = fcn_model(inputs)
-            # print("Loss")
-            loss = criterion(outputs, labels)  # Does not work for different n_class in outputs and labels
-            # print("Backward pass")
-            loss.backward()
-            # print("Optimizing")
-            optimizer.step()
+
+            loss = criterion(outputs, labels)
+            loss_acc += loss.data/(batch_size)
+            loss.backward() # TODO: Should I sum the loss on every batch, calculate mean of it and do optimizer.step()?  ANS: We are performing mini-batch training, the loss is already the average of the batch. Increasing the bathch size should make training more smooth(less stochastic), but needs more memory.
+            optimizer.step() #
 
             if iter % 10 == 0:
                 print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss.data))
-        scheduler.step() # TODO: print scheduler lr?
+        scheduler.step()
         print("Finish epoch {}, time elapsed {}".format(epoch, time.time() - ts))
         # pdb.set_trace()
-
+        train_loss[epoch] = loss_acc
+        learning_rate[epoch] = optimizer.param_groups[0]['lr']
+        np.save(os.path.join(score_dir, "train_loss"), train_loss)
+        np.save(os.path.join(score_dir, "learning_rate"), optimizer.param_groups[0]['lr'])
         torch.save(fcn_model, model_path+'FULL')
+
 
         # Alternative save
         torch.save({
@@ -303,6 +308,7 @@ def val(epoch):
     np.save(os.path.join(score_dir, "meanPixel"), pixel_scores)
 
 
+
 # borrow functions and modify it from https://github.com/Kaixhin/FCN-semantic-segmentation/blob/ma ster/main.py
 # Calculates class intersections over unions
 def iou(pred, target):
@@ -326,7 +332,7 @@ def pixel_acc(pred, target):
     #print("pixel accuracy debug", correct, total)
     return correct / total
 
-#
+
 # def heat_maps(batch, predictions):
 #     show_batch(batch)
 #
