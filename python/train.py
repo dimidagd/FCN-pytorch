@@ -54,7 +54,7 @@ elif inp == 3:
     lr = 1e-2  # FCN32s
 elif inp == 4:
     submodel =''
-    lr = 1e-4
+    lr = 1e-2
 else:
     print("Invalid input!")
 
