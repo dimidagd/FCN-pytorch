@@ -55,7 +55,7 @@ elif inp == 3:
 elif inp == 4:
     submodel =''
     lr = 1e-2
-    batch_size = 5
+    batch_size = 3
 else:
     print("Invalid input!")
 
