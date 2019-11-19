@@ -132,7 +132,7 @@ if use_gpu:
 
 
 
-
+checkpoint_load_chk = ''
 # Load checkpoint after cuda DataParallel initialization
 if os.path.exists(model_path):
     checkpoint_load_chk = str(input("Found previous checkpoint, use it? "))
