@@ -30,7 +30,7 @@ epochs = 500
 
 momentum = 0
 w_decay = 1e-5
-step_size = 50
+step_size = 20
 gamma = 0.5
 
 
