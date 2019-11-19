@@ -147,11 +147,22 @@ if os.path.exists(model_path):
         scheduler.load_state_dict(checkpoint['scheduler'])
         start_epoch = checkpoint['epoch']
         loss = checkpoint['loss']
-
+        print("Would you like to reset learning rate to a value?(d:default,c: custom,n: keep checkpoint :")
+        opt = input(': ')
+        if opt == 'd':
+            for g in optim.param_groups:
+                g['lr'] =  lr
+        elif opt == 'c':
+            lr_val = float(input('Insert value for lr: '))
+            for g in optim.param_groups:
+                g['lr'] = lr_val
+        elif opt == 'n':
+            pass
     else:
         start_epoch = 0
 
 
+# TODO: Load other layers params as well
 
 #  Initialize from previous models if didnt use checkpoint
 if checkpoint_load_chk != 'y':
