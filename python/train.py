@@ -200,19 +200,6 @@ if checkpoint_load_chk != 'y':
 
 
 
-# Load checkpoint after cuda DataParallel initialization
-if os.path.exists(model_path):
-    print("Loading checkpoint..")
-    checkpoint = torch.load(model_path)
-    fcn_model.load_state_dict(checkpoint['model_state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    scheduler.load_state_dict(checkpoint['scheduler'])
-    start_epoch = checkpoint['epoch']
-    loss = checkpoint['loss']
-
-else:
-    start_epoch = 0
-
 
 
 # create dir for score
@@ -226,7 +213,7 @@ pixel_scores = np.zeros(epochs)
 def train():
     fcn_model.train()  # Reactivate batch norm etc
     for epoch in range(start_epoch, epochs):
-        # scheduler.step()
+
 
         ts = time.time()
         for iter, batch in enumerate(train_loader):
@@ -249,7 +236,7 @@ def train():
 
             if iter % 10 == 0:
                 print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss.data))
-        scheduler.step()
+        scheduler.step() # TODO: print scheduler lr?
         print("Finish epoch {}, time elapsed {}".format(epoch, time.time() - ts))
         # pdb.set_trace()
 
