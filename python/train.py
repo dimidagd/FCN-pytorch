@@ -134,18 +134,19 @@ if use_gpu:
 
 
 # Load checkpoint after cuda DataParallel initialization
-checkpoint_load_chk = str(input("Found previous checkpoint, use it? "))
-if os.path.exists(model_path) and checkpoint_load_chk == 'y':
-    print("Load last checkpoint..")
-    checkpoint = torch.load(model_path)
-    fcn_model.load_state_dict(checkpoint['model_state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    scheduler.load_state_dict(checkpoint['scheduler'])
-    start_epoch = checkpoint['epoch']
-    loss = checkpoint['loss']
+if os.path.exists(model_path):
+    checkpoint_load_chk = str(input("Found previous checkpoint, use it? "))
+    if os.path.exists(model_path) and checkpoint_load_chk == 'y':
+        print("Load last checkpoint..")
+        checkpoint = torch.load(model_path)
+        fcn_model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        scheduler.load_state_dict(checkpoint['scheduler'])
+        start_epoch = checkpoint['epoch']
+        loss = checkpoint['loss']
 
-else:
-    start_epoch = 0
+    else:
+        start_epoch = 0
 
 
 
