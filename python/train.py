@@ -25,10 +25,9 @@ import os
 
 n_class = 32
 
-batch_size = 3
+batch_size = 6
 epochs = 500
-#lr = 1e-4 # FCN8s, or FCNs
-lr = 1e-2 # FCN32s
+
 momentum = 0
 w_decay = 1e-5
 step_size = 50
@@ -46,12 +45,16 @@ inp = int(input(": "))
 
 if inp == 1:
     submodel = '8'
+    lr = 1e-4
 elif inp == 2:
     submodel = '16'
+    lr = 1e-3  # FCN16s
 elif inp == 3:
     submodel = '32'
+    lr = 1e-2  # FCN32s
 elif inp == 4:
     submodel =''
+    lr = 1e-4
 else:
     print("Invalid input!")
 
@@ -214,7 +217,7 @@ def train():
     fcn_model.train()  # Reactivate batch norm etc
     for epoch in range(start_epoch, epochs):
 
-
+        print(optimizer)
         ts = time.time()
         for iter, batch in enumerate(train_loader):
             optimizer.zero_grad()
