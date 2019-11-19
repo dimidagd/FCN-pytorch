@@ -27,8 +27,8 @@ n_class = 32
 
 batch_size = 3
 epochs = 500
-#lr = 1e-4
-lr = 1e-2
+#lr = 1e-4 # FCN8s, or FCNs
+lr = 1e-2 # FCN32s
 momentum = 0
 w_decay = 1e-5
 step_size = 50
@@ -246,10 +246,10 @@ def train():
             loss.backward()
             # print("Optimizing")
             optimizer.step()
-            scheduler.step()
+
             if iter % 10 == 0:
                 print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss.data))
-
+        scheduler.step()
         print("Finish epoch {}, time elapsed {}".format(epoch, time.time() - ts))
         # pdb.set_trace()
 
