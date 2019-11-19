@@ -126,52 +126,72 @@ if use_gpu:
     print("Finish cuda loading, time elapsed {}".format(time.time() - ts))
 
 
-#  Initialize from previous models
-if inp == 2 and os.path.exists(model_path.replace("FCN16s", "FCN32s")):
-    inp2 = str(input("Found previously trained FCN32s, put it as initialization point? (y/n) "))
-    if inp2 == 'y':
-        if use_gpu:
-            checkpoint = torch.load(model_path.replace("FCN16s", "FCN32s"))
-        else:
-            checkpoint = torch.load(model_path.replace("FCN16s", "FCN32s"), map_location=torch.device('cpu'))
-        classifier_params = {}
-        classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
-        classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
-        if use_gpu:
-            fcn_model.module.classifier.load_state_dict(classifier_params)
-        else:
-            fcn_model.classifier.load_state_dict(classifier_params)
 
-if inp == 1 and os.path.exists(model_path.replace("FCN8s", "FCN16s")):
-    inp2 = str(input("Found previously trained FCN16s, put it as initialization point? (y/n) "))
-    if inp2 == 'y':
-        if use_gpu:
-            checkpoint = torch.load(model_path.replace("FCN8s", "FCN16s"))
-        else:
-            checkpoint = torch.load(model_path.replace("FCN8s", "FCN16s"), map_location=torch.device('cpu'))
-        classifier_params = {}
-        classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
-        classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
-        if use_gpu:
-            fcn_model.module.classifier.load_state_dict(classifier_params)
-        else:
-            fcn_model.classifier.load_state_dict(classifier_params)
 
-if inp == 4 and os.path.exists(model_path.replace("FCNs", "FCN8s")):
-    inp2 = str(input("Found previously trained FCN8s, put it as initialization point? (y/n) "))
-    if inp2 == 'y':
-        if use_gpu:
-            checkpoint = torch.load(model_path.replace("FCNs", "FCN8"))
-        else:
-            checkpoint = torch.load(model_path.replace("FCNs", "FCN8s"), map_location=torch.device('cpu'))
 
-        classifier_params = {}
-        classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
-        classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
-        if use_gpu:
-            fcn_model.module.classifier.load_state_dict(classifier_params)
-        else:
-            fcn_model.classifier.load_state_dict(classifier_params)
+# Load checkpoint after cuda DataParallel initialization
+checkpoint_load_chk = str(input("Found previous checkpoint, use it? "))
+if os.path.exists(model_path) and checkpoint_load_chk == 'y':
+    print("Load last checkpoint..")
+    checkpoint = torch.load(model_path)
+    fcn_model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    scheduler.load_state_dict(checkpoint['scheduler'])
+    start_epoch = checkpoint['epoch']
+    loss = checkpoint['loss']
+
+else:
+    start_epoch = 0
+
+
+
+#  Initialize from previous models if didnt use checkpoint
+if checkpoint_load_chk != 'y':
+    if inp == 2 and os.path.exists(model_path.replace("FCN16s", "FCN32s")) :
+        inp2 = str(input("Found previously trained FCN32s, put it as initialization point? (y/n) "))
+        if inp2 == 'y':
+            if use_gpu:
+                checkpoint = torch.load(model_path.replace("FCN16s", "FCN32s"))
+            else:
+                checkpoint = torch.load(model_path.replace("FCN16s", "FCN32s"), map_location=torch.device('cpu'))
+            classifier_params = {}
+            classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
+            classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
+            if use_gpu:
+                fcn_model.module.classifier.load_state_dict(classifier_params)
+            else:
+                fcn_model.classifier.load_state_dict(classifier_params)
+
+    if inp == 1 and os.path.exists(model_path.replace("FCN8s", "FCN16s")):
+        inp2 = str(input("Found previously trained FCN16s, put it as initialization point? (y/n) "))
+        if inp2 == 'y':
+            if use_gpu:
+                checkpoint = torch.load(model_path.replace("FCN8s", "FCN16s"))
+            else:
+                checkpoint = torch.load(model_path.replace("FCN8s", "FCN16s"), map_location=torch.device('cpu'))
+            classifier_params = {}
+            classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
+            classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
+            if use_gpu:
+                fcn_model.module.classifier.load_state_dict(classifier_params)
+            else:
+                fcn_model.classifier.load_state_dict(classifier_params)
+
+    if inp == 4 and os.path.exists(model_path.replace("FCNs", "FCN8s")):
+        inp2 = str(input("Found previously trained FCN8s, put it as initialization point? (y/n) "))
+        if inp2 == 'y':
+            if use_gpu:
+                checkpoint = torch.load(model_path.replace("FCNs", "FCN8"))
+            else:
+                checkpoint = torch.load(model_path.replace("FCNs", "FCN8s"), map_location=torch.device('cpu'))
+
+            classifier_params = {}
+            classifier_params['weight'] = checkpoint['model_state_dict']['module.classifier.weight']
+            classifier_params['bias'] = checkpoint['model_state_dict']['module.classifier.bias']
+            if use_gpu:
+                fcn_model.module.classifier.load_state_dict(classifier_params)
+            else:
+                fcn_model.classifier.load_state_dict(classifier_params)
 
 
 
