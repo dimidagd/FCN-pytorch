@@ -30,8 +30,8 @@ epochs = 500
 
 momentum = 0
 w_decay = 1e-5
-step_size = 20
-gamma = 0.5
+step_size = 2
+gamma = 0.7
 
 
 
@@ -147,14 +147,16 @@ if os.path.exists(model_path):
         scheduler.load_state_dict(checkpoint['scheduler'])
         start_epoch = checkpoint['epoch']
         loss = checkpoint['loss']
+
+        # Option to override learning params:
         print("Would you like to reset learning rate to a value?(d:default,c: custom,n: keep checkpoint :")
         opt = input(': ')
         if opt == 'd':
-            for g in optim.param_groups:
+            for g in optimizer.param_groups:
                 g['lr'] =  lr
         elif opt == 'c':
             lr_val = float(input('Insert value for lr: '))
-            for g in optim.param_groups:
+            for g in optimizer.param_groups:
                 g['lr'] = lr_val
         elif opt == 'n':
             pass
