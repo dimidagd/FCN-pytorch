@@ -374,6 +374,6 @@ def pixel_acc(pred, target):
 
 if __name__ == "__main__":
     print('Validating without train')
-    val(0)  # show the accuracy before training
+    val(start_epoch)  # show the accuracy before training
     print('Starting train loop')
     train()

@@ -53,3 +53,16 @@ python3 python/train.py CityScapes
 
 ## Author
 Po-Chih Huang / [@pochih](https://pochih.github.io/)
+
+
+## Fork material
+
+# Developed for Deep learning course / Denmark's Technical University / Fall 2019
+
+###Developers 
+Dimitrios Dagdilelis / [@dimidagd](https://dimidagd.github.io/) 
+
+Mitul Verik 
+
+https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/image_segmentation.html
+
