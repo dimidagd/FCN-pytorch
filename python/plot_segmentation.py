@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from torchvision import utils
 
 
-def plot_pred(img, ground_truth, pred):
+def plot_pred(img, ground_truth, pred, iter):
     label2color = {}
     color2label = {}
     label2index = {}
@@ -15,7 +15,7 @@ def plot_pred(img, ground_truth, pred):
     for idx, line in enumerate(f):
         label = line.split()[-1]
         color = tuple([int(x) for x in line.split()[:-1]])
-        print(label, color)
+        #print(label, color)
         label2color[label] = color
         color2label[color] = label
         label2index[label] = idx
@@ -77,4 +77,4 @@ def plot_pred(img, ground_truth, pred):
     plt.imshow(ground_truth_BGR.transpose((1, 2, 0)))
     plt.subplot(1, 3, 3)
     plt.imshow(pred_BGR.transpose((1, 2, 0)))
-    plt.show()
+    plt.savefig('result/result' + iter + '.png')
