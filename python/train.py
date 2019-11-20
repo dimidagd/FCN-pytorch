@@ -13,14 +13,13 @@ from torch.utils.data import DataLoader
 from fcn import VGGNet, FCN32s, FCN16s, FCN8s, FCNs
 from Cityscapes_loader import CityScapesDataset as CityscapesDataset
 from CamVid_loader import CamVidDataset, show_batch
-
+import plot_segmentation
 from matplotlib import pyplot as plt
 import pdb
 import numpy as np
 import time
 import sys
 import os
-
 
 
 n_class = 32
@@ -297,7 +296,8 @@ def val(epoch):
         for p, t in zip(pred, target):
             total_ious.append(iou(p, t))
             pixel_accs.append(pixel_acc(p, t))
-
+        if iter%10 == 0:
+            plot_segmentation(inputs, target, pred)
     # Calculate average IoU
     total_ious = np.array(total_ious).T  # n_class * val_len
     ious = np.nanmean(total_ious, axis=1)
