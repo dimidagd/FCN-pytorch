@@ -62,7 +62,7 @@ Po-Chih Huang / [@pochih](https://pochih.github.io/)
 ###Developers 
 Dimitrios Dagdilelis / [@dimidagd](https://dimidagd.github.io/) 
 
-Mitul Verik 
+Mitul Vekariya
 
 https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/image_segmentation.html
 
