@@ -21,6 +21,8 @@ import time
 import sys
 import os
 
+model_opt = int(sys.argv[3])
+cluster = int(sys.argv[2])
 
 n_class = 32
 
@@ -41,7 +43,10 @@ print("1. FCN8s")
 print("2. FCN16s")
 print("3. FCN32s")
 print("4. FCNs")
-inp = int(input(": "))
+if not cluster:
+    inp = int(input(": "))
+else:
+    inp = model_opt
 
 if inp == 1:
     submodel = '8'
@@ -137,7 +142,7 @@ if use_gpu:
 
 checkpoint_load_chk = ''
 # Load checkpoint after cuda DataParallel initialization
-if os.path.exists(model_path):
+if os.path.exists(model_path) and not cluster:
     checkpoint_load_chk = str(input("Found previous checkpoint, use it? "))
     if os.path.exists(model_path) and checkpoint_load_chk == 'y':
         print("Load last checkpoint..")
@@ -167,7 +172,7 @@ if os.path.exists(model_path):
 # TODO: Load other layers params as well
 
 #  Initialize from previous models if didnt use checkpoint
-if checkpoint_load_chk != 'y':
+if checkpoint_load_chk != 'y' and not cluster:
     if inp == 2 and os.path.exists(model_path.replace("FCN16s", "FCN32s")) :
         inp2 = str(input("Found previously trained FCN32s, put it as initialization point? (y/n) "))
         if inp2 == 'y':
@@ -310,7 +315,6 @@ def val(epoch):
 
 
 
-# borrow functions and modify it from https://github.com/Kaixhin/FCN-semantic-segmentation/blob/ma ster/main.py
 # Calculates class intersections over unions
 def iou(pred, target):
     ious = []
@@ -332,45 +336,6 @@ def pixel_acc(pred, target):
     total = (target == target).sum()
     #print("pixel accuracy debug", correct, total)
     return correct / total
-
-
-# def heat_maps(batch, predictions):
-#     show_batch(batch)
-#
-#     heatmap = np.zeros((*predictions.shape, 3))
-#
-#     r = np.zeros(predictions.shape)
-#     b = 0*r
-#     g = 0*r
-#
-#     label2color = {}
-#     color2label = {}
-#     label2index = {}
-#     index2label = {}
-#
-#     f = open('CamVid/label_colors.txt', "r").read().split("\n")[:-1]  # ignore the last empty line
-#
-#     for idx, line in enumerate(f):
-#         label = line.split()[-1]
-#         color = tuple([int(x) for x in line.split()[:-1]])
-#         print(label, color)
-#         label2color[label] = color
-#         color2label[color] = label
-#         label2index[label] = idx
-#         index2label[idx] = label
-#
-#     heatmap = heatmap.reshape(3, heatmap.shape[1] * heatmap.shape[2])
-#
-#     for i, pixel in enumerate(predictions.squeeze(0)):
-#
-#         heatmap[:,i] = np.array(label2color[index2label[pixel]])
-#
-#     heatmap.reshape((3,*predictions.shape))
-
-
-
-
-
 
 if __name__ == "__main__":
     print('Validating without train')
