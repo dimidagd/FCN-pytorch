@@ -13,7 +13,7 @@ from torch.utils.data import DataLoader
 from fcn import VGGNet, FCN32s, FCN16s, FCN8s, FCNs
 from Cityscapes_loader import CityScapesDataset as CityscapesDataset
 from CamVid_loader import CamVidDataset, show_batch
-import plot_segmentation import plot_pred
+from plot_segmentation import plot_pred
 from matplotlib import pyplot as plt
 import pdb
 import numpy as np
