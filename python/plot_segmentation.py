@@ -77,4 +77,4 @@ def plot_pred(img, ground_truth, pred, iter):
     plt.imshow(ground_truth_BGR.transpose((1, 2, 0)))
     plt.subplot(1, 3, 3)
     plt.imshow(pred_BGR.transpose((1, 2, 0)))
-    plt.savefig('result/result' + iter + '.png')
+    plt.savefig('result/result' + str(iter) + '.png')
