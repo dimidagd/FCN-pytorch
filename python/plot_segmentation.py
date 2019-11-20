@@ -1,7 +1,7 @@
 #### compare image, ground truth and prediction
 
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from torchvision import utils
 
 
