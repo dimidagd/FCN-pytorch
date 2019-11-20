@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib as plt
 from torchvision import utils
 
+
 def plot_pred(img, ground_truth, pred):
     label2color = {}
     color2label = {}
