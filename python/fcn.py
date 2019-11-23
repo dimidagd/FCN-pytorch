@@ -156,7 +156,8 @@ class FCNs(nn.Module):
 
 
 class VGGNet(VGG):
-    def __init__(self, pretrained=True, model='vgg16', requires_grad=True, remove_fc=True, show_params=False):
+    def __init__(self, pretrained=True, model='vgg16', requires_grad=False, remove_fc=True, show_params=False):
+        # TODO: check if freezing the VGG helps or not
         super().__init__(make_layers(cfg[model]))
         self.ranges = ranges[model]
 
