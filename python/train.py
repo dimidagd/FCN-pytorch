@@ -34,7 +34,7 @@ momentum = 0
 w_decay = 1e-5
 step_size = 4
 gamma = 0.9
-
+train_vgg = True
 
 
 print("Loading FCN")
@@ -104,7 +104,12 @@ print("loading validation file from", val_file)
 val_loader = DataLoader(val_data, batch_size=1, num_workers=8)
 
 print("Loading VGG")
-vgg_model = VGGNet(requires_grad=True, remove_fc=True)
+if train_vgg:
+    print("Training VGG backend as well")
+else:
+    print("VGG frozen on purpose")
+vgg_model = VGGNet(requires_grad=train_vgg, remove_fc=True)
+
 
 
 if inp == 1:
