@@ -34,7 +34,7 @@ momentum = 0
 w_decay = 1e-5
 step_size = 4
 gamma = 0.9
-train_vgg = True
+train_vgg = False
 
 
 print("Loading FCN")
