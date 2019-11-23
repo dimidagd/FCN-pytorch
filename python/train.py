@@ -26,7 +26,7 @@ cluster = int(sys.argv[2])
 
 n_class = 32
 
-batch_size = 3
+batch_size = 5
 
 epochs = 500
 
