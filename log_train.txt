@@ -1,0 +1,43 @@
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@n-62-20-7>
+Subject: Job 4746411: <camvid_util> in cluster <dcc> Exited
+
+Job <camvid_util> was submitted from host <gbarlogin2> by user <s182589> in cluster <dcc> at Mon Nov 25 18:46:27 2019
+Job was executed on host(s) <n-62-20-7>, in queue <gpuv100>, as user <s182589> in cluster <dcc> at Mon Nov 25 19:17:23 2019
+</zhome/95/8/135203> was used as the home directory.
+</zhome/95/8/135203/Deep_Learning/FCN-pytorch> was used as the working directory.
+Started at Mon Nov 25 19:17:23 2019
+Terminated at Mon Nov 25 20:26:47 2019
+Results reported at Mon Nov 25 20:26:47 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+script_train.sh
+------------------------------------------------------------
+
+Exited with exit code 120.
+
+Resource usage summary:
+
+    CPU time :                                   4076.53 sec.
+    Max Memory :                                 4710 MB
+    Average Memory :                             3938.16 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               3482.00 MB
+    Max Swap :                                   -
+    Max Processes :                              12
+    Max Threads :                                50
+    Run time :                                   4164 sec.
+    Turnaround time :                            6020 sec.
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <log_err_train.txt> for stderr output of this job.
+
