@@ -233,10 +233,32 @@ score_dir = os.path.join("scores", configs)
 if not os.path.exists(score_dir):
     os.makedirs(score_dir)
 # TODO: load np's from files
-IU_scores = np.zeros((epochs, n_class))
-pixel_scores = np.zeros(epochs)
-train_loss = np.zeros(epochs)
-learning_rate = np.zeros(epochs)
+_ = os.path.join(score_dir,'/train_loss')
+
+if os.path.exists(_):
+    train_loss = np.load(_)
+else:
+    train_loss = np.zeros(epochs)
+_ = os.path.join(score_dir,'learning_rate')
+
+if os.path.exists(_):
+    learning_rate = np.load(_)
+else:
+    learning_rate = np.zeros(epochs)
+
+_ = os.path.join(score_dir,'/meanIU')
+if os.path.exists(_):
+    IU_scores = np.zeros(_)
+else:
+    IU_scores = np.zeros((epochs, n_class))
+
+_ = os.path.join(score_dir,'meanPixel')
+if os.path.exists(_):
+    pixel_scores = np.load(_)
+else:
+    pixel_scores = np.zeros(epochs)
+
+
 
 def train():
     fcn_model.train()  # Reactivate batch norm etc
