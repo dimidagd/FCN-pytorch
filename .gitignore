@@ -3,5 +3,4 @@
 **/__pycache__
 CamVid
 Cityscapes
-/python/CamVid/train.csv
-/python/CamVid/val.csv
+/python/CamVid
