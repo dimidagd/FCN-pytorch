@@ -93,7 +93,7 @@ else:
     train_data = CityscapesDataset(csv_file=train_file, phase='train')
 
 print("Running DataLoader from ", train_file)
-train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=8)
+train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=False, num_workers=8)
 
 if argv1 == 'CamVid':
     val_data = CamVidDataset(csv_file=val_file, phase='val', flip_rate=0)
@@ -232,6 +232,7 @@ if checkpoint_load_chk != 'y' and not cluster:
 score_dir = os.path.join("scores", configs)
 if not os.path.exists(score_dir):
     os.makedirs(score_dir)
+# TODO: load np's from files
 IU_scores = np.zeros((epochs, n_class))
 pixel_scores = np.zeros(epochs)
 train_loss = np.zeros(epochs)
@@ -269,7 +270,7 @@ def train():
         train_loss[epoch] = loss_acc
         learning_rate[epoch] = optimizer.param_groups[0]['lr']
         np.save(os.path.join(score_dir, "train_loss"), train_loss)
-        np.save(os.path.join(score_dir, "learning_rate"), optimizer.param_groups[0]['lr'])
+        np.save(os.path.join(score_dir, "learning_rate"), learning_rate)
         torch.save(fcn_model, model_path+'FULL')
 
 
@@ -327,7 +328,7 @@ def iou(pred, target):
         pred_inds = pred == cls
         target_inds = target == cls
         intersection = pred_inds[target_inds].sum()
-        union = pred_inds.sum() + target_inds.sum() - intersection
+        union = pred_inds.sum() + target_inds.sum() - intersection # Will be zeros if class not present in Ground Truth
         if union == 0:
             ious.append(float('nan'))  # if there is no ground truth, do not include in evaluation
         else:
