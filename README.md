@@ -70,3 +70,6 @@ https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/image_se
 - Validation accuracy high when continuing training, but next epoch loss sucks.
 - Imbalanced classes in the dataset, (small objects have less pixels), need to balance the loss function, [possible solution](https://medium.com/@First350/tensorflow-dealing-with-imbalanced-data-eb0108b10701)
 or [here](https://www.jeremyjordan.me/semantic-segmentation/)
+
+### Useful urls
+[plotting](http://www.randalolson.com/2014/06/28/how-to-make-beautiful-data-visualizations-in-python-with-matplotlib/)
