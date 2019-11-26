@@ -233,26 +233,26 @@ score_dir = os.path.join("scores", configs)
 if not os.path.exists(score_dir):
     os.makedirs(score_dir)
 # TODO: load np's from files
-_ = os.path.join(score_dir,'/train_loss')
+_ = os.path.join(score_dir,'/train_loss.npy')
 
 if os.path.exists(_):
     train_loss = np.load(_)
 else:
     train_loss = np.zeros(epochs)
-_ = os.path.join(score_dir,'learning_rate')
+_ = os.path.join(score_dir,'learning_rate.npy')
 
 if os.path.exists(_):
     learning_rate = np.load(_)
 else:
     learning_rate = np.zeros(epochs)
 
-_ = os.path.join(score_dir,'/meanIU')
+_ = os.path.join(score_dir,'/meanIU.npy')
 if os.path.exists(_):
     IU_scores = np.zeros(_)
 else:
     IU_scores = np.zeros((epochs, n_class))
 
-_ = os.path.join(score_dir,'meanPixel')
+_ = os.path.join(score_dir,'meanPixel.npy')
 if os.path.exists(_):
     pixel_scores = np.load(_)
 else:
