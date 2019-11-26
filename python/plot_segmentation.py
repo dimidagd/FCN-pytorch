@@ -2,10 +2,11 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 from torchvision import utils
 
 
-def plot_pred(img, ground_truth, pred, iter):
+def plot_pred(img, ground_truth, pred, iter,model):
     label2color = {}
     color2label = {}
     label2index = {}
@@ -72,10 +73,13 @@ def plot_pred(img, ground_truth, pred, iter):
 
     plt.figure(figsize=(22, 12))
     plt.subplot(1, 3, 1)
+    plt.title('Validation image')
     plt.imshow(grid.cpu().numpy()[::-1].transpose((1, 2, 0)))
     plt.subplot(1, 3, 2)
+    plt.title('Ground truth')
     plt.imshow(ground_truth_BGR.transpose((1, 2, 0)))
     plt.subplot(1, 3, 3)
+    plt.title('Model '+ model+ ' prediction')
     plt.imshow(pred_BGR.transpose((1, 2, 0)))
-    plt.savefig('result/result' + str(iter) + '.png')
+    plt.savefig(os.path.join('result', 'result' + str(iter) + model + '.pdf'), bbox_inches="tight")
     plt.close()

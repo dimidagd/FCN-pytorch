@@ -51,14 +51,18 @@ else:
 if inp == 1:
     submodel = '8'
     lr = 1e-4
+    model = 'FCN8s'
 elif inp == 2:
     submodel = '16'
     lr = 1e-3  # FCN16s
+    model = 'FCN16s'
 elif inp == 3:
     submodel = '32'
     lr = 1e-2  # FCN32s
+    model = 'FCN32s'
 elif inp == 4:
     submodel =''
+    model = 'FCNs'
     lr = 1e-2
 else:
     print("Invalid input!")
@@ -330,7 +334,7 @@ def val(epoch):
             total_ious.append(iou(p, t))
             pixel_accs.append(pixel_acc(p, t))
         if iter%10 == 0:
-            plot_pred(inputs, target, pred, iter)
+            plot_pred(inputs, target, pred, iter, model)
     # Calculate average IoU
     total_ious = np.array(total_ious).T  # n_class * val_len
     ious = np.nanmean(total_ious, axis=1)
