@@ -77,6 +77,7 @@ r = (int(r1), int(r2))
 for y in range(10, 91, 10):
     plt.plot(range(*r), [y] * len(range(*r)), "--", lw=0.5, color="black", alpha=0.3)
 
+plt.savefig(os.path.join("files","Single_model_IoU_training.pdf"), bbox_inches="tight")
 plt.show()
 plt.close()
 
@@ -130,6 +131,7 @@ for y in range(1, 90, 10):
 
 ax.invert_yaxis()  # labels read top-to-bottom
 
+plt.savefig(os.path.join("files","Single_model_IoU_classes_colored.pdf"), bbox_inches="tight")
 plt.show()
 plt.close()
 
@@ -172,6 +174,7 @@ for y in range(1, 90, 10):
 
 ax.invert_yaxis()  # labels read top-to-bottom
 
+plt.savefig(os.path.join("files","All_models_IoU_classes_comparison.pdf"), bbox_inches="tight")
 plt.show()
 plt.close()
 
@@ -180,7 +183,7 @@ plt.close()
 histories = {}
 models = []
 for iter, item in enumerate(fold_list):
-    print(str(iter)+'. ' + item)
+    # print(str(iter)+'. ' + item)
     file_path = os.path.join(scores_dir, item, 'meanPixel.npy')
     which_model = item.partition("-")[0]
     models.append(which_model)
@@ -223,8 +226,59 @@ ax.spines["left"].set_visible(False)
 ax.get_xaxis().tick_bottom()
 ax.get_yaxis().tick_left()
 
+plt.savefig(os.path.join("files","Models_pixel_accuracy.pdf"), bbox_inches="tight")
 plt.show()
 plt.close()
 
 
+#Plot learning rate
 
+
+
+
+# Pixel accuracy training
+histories = {}
+models = []
+for iter, item in enumerate(fold_list):
+    # print(str(iter)+'. ' + item)
+    file_path = os.path.join(scores_dir, item, 'learning_rate.npy')
+    which_model = item.partition("-")[0]
+    models.append(which_model)
+    hist = np.load(file_path)
+    hist = hist[:np.max(np.nonzero(hist))]  # Crop until trained epoch
+    histories[which_model] = hist
+
+
+ax = plt.subplot(1,1,1)
+p = []
+for iter,mdl in enumerate(models):
+    plt.plot(histories[mdl], label=mdl,zorder=10)
+
+
+ax.set_title("Learning rate", fontweight="bold")
+ax.set_xlabel("epoch")
+ax.set_ylabel("lr")
+
+#
+r1,r2 = plt.xlim()
+r = (int(r1), int(r2))
+
+r1y, r2y = plt.ylim()
+
+for y in list(plt.yticks()[0][1:-1]):
+    plt.plot(range(*r), [y] * len(range(*r)), "--", lw=0.5, color="black", alpha=0.3,zorder=1)
+
+
+
+#Beautify
+ax.spines["top"].set_visible(False)
+ax.spines["bottom"].set_visible(False)
+ax.spines["right"].set_visible(False)
+ax.spines["left"].set_visible(False)
+ax.get_xaxis().tick_bottom()
+ax.get_yaxis().tick_left()
+plt.legend(loc='best')
+
+plt.savefig(os.path.join("files","Learning_rate.pdf"), bbox_inches="tight")
+plt.show()
+plt.close()
