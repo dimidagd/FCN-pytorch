@@ -72,6 +72,9 @@ else:
 
 configs = "FCN{}s-BCEWithLogits_batch{}_epoch{}_RMSprop_scheduler-step{}-gamma{}_lr{}_momentum{}_w_decay{}".format(submodel,
     batch_size, epochs, step_size, gamma, lr, momentum, w_decay)
+
+if train_vgg: configs = configs + 'Vgg_train'+ str(train_vgg)
+
 print("Configs:", configs)
 
 argv1 = 'CamVid'
