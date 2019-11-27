@@ -340,7 +340,7 @@ def val(epoch):
             total_ious.append(iou(p, t))
             pixel_accs.append(pixel_acc(p, t))
         if iter%10 == 0:
-            plot_pred(inputs, target, pred, iter, model)
+            plot_pred(inputs, target, pred, iter, configs)
     # Calculate average IoU
     total_ious = np.array(total_ious).T  # n_class * val_len
     ious = np.nanmean(total_ious, axis=1)
