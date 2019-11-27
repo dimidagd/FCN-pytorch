@@ -34,7 +34,9 @@ momentum = 0
 w_decay = 1e-5
 step_size = 4
 gamma = 0.9
-train_vgg = False
+
+train_vgg = True
+
 
 
 print("Loading FCN")
@@ -126,6 +128,7 @@ elif inp == 4:
     fcn_model = FCNs(pretrained_net=vgg_model, n_class=n_class)
 else:
     print("Invalid input!")
+    input()
 
 criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.RMSprop(fcn_model.parameters(), lr=lr, momentum=momentum, weight_decay=w_decay)
