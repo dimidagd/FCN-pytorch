@@ -1,0 +1,55 @@
+Wed Nov 27 19:13:56 2019       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 440.33.01    Driver Version: 440.33.01    CUDA Version: 10.2     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  Tesla V100-PCIE...  On   | 00000000:AF:00.0 Off |                    0 |
+| N/A   28C    P0    23W / 250W |      0MiB / 16160MiB |      0%   E. Process |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+Loading FCN
+Please choose submodel
+1. FCN8s
+2. FCN16s
+3. FCN32s
+4. FCNs
+Configs: FCN16s-BCEWithLogits_batch5_epoch500_RMSprop_scheduler-step4-gamma0.9_lr0.001_momentum0_w_decay1e-05Vgg_trainTrue
+Using CamVid dataset
+Running DataLoader from  CamVid/train.csv
+loading validation file from CamVid/val.csv
+Loading VGG
+Training VGG backend as well
+Use GPU : True
+Using GPU, loading cuda shiat
+Loading vgg on cuda
+Loading FC on cuda
+Number of GPUs [0]
+Finish cuda loading, time elapsed 7.3374245166778564
+Validating without train
+epoch0, pix_acc: 0.036703497023809525, meanIoU: 0.0012661426116371169, IoUs: [0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 3.73247857e-06 3.67032781e-02 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00            nan 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 1.11251250e-05 0.00000000e+00
+ 0.00000000e+00            nan 0.00000000e+00 0.00000000e+00
+            nan 0.00000000e+00 0.00000000e+00 0.00000000e+00]
+Starting train loop
+RMSprop (
+Parameter Group 0
+    alpha: 0.99
+    centered: False
+    eps: 1e-08
+    initial_lr: 0.001
+    lr: 0.001
+    momentum: 0
+    weight_decay: 1e-05
+)
