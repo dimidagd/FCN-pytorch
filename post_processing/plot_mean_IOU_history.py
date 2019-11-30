@@ -60,7 +60,7 @@ for iter, item in enumerate(fold_list):
 which_model = models[3]
 hist = histories[which_model]
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 20))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(27, 20))
 
 p = []
 colors = np.array(list(color2label.keys()))/255
@@ -139,7 +139,7 @@ for y in range(1, 90, 10):
 
 ax2.invert_yaxis()  # labels read top-to-bottom
 
-plt.savefig(os.path.join("files","Single_model_IoU_classes_colored.pdf"), bbox_inches="tight")
+plt.savefig(os.path.join("files","Single_model_IoU_classes_colored.pdf"),bbox_inches='tight') #, bbox_inches="tight")
 plt.show()
 plt.close()
 
@@ -220,7 +220,7 @@ for iter,mdl in enumerate(models):
     if histories[mdl][-1]> 0.4:
         ax.plot(100 * filter(inp=histories[mdl]), label=str(mdl),linewidth=4)
 
-ax.set_title("Model pixel accuracy", fontweight="bold")
+ax.set_title("Model pixel accuracy")
 ax.set_xlabel("epoch")
 ax.set_ylabel("Pixel accuracy %")
 
@@ -295,8 +295,8 @@ plt.legend(loc='best')
 
 plt.savefig(os.path.join("files","Learning_rate.pdf"), bbox_inches="tight")
 plt.show()
-plt.close()
 
+plt.close()
 
 # Combine last 3 =====================
 
@@ -357,7 +357,7 @@ ax11.spines["right"].set_visible(False)
 ax11.spines["left"].set_visible(False)
 ax11.get_xaxis().tick_bottom()
 ax11.get_yaxis().tick_left()
-#ax11.legend(loc='best')
+ax11.legend(loc='best',fontsize=7)
 
 
 
@@ -383,7 +383,7 @@ for iter,mdl in enumerate(models):
     if histories[mdl][-1]> 0.4:
         ax12.plot(100 * filter(inp=histories[mdl]), label=str(mdl),linewidth=2)
 
-ax12.set_title("Model pixel accuracy", fontweight="bold")
+ax12.set_title("Model pixel accuracy")
 ax12.set_xlabel("epoch")
 ax12.set_ylabel("Pixel accuracy %")
 
@@ -394,12 +394,12 @@ r = (int(r1), int(r2))
 
 r1y, r2y = ax12.get_ylim()
 
-for y in list(ax11.get_yticks()[1:-1]):
+for y in list(ax12.get_yticks()[1:-1]):
     ax12.plot(range(*r), [y] * len(range(*r)), "--", lw=0.5, color="black", alpha=0.3,zorder=1)
 
 
 
-plt.legend(loc='best')
+ax12.legend(loc='best',fontsize=7)
 
 #Beautify
 ax12.spines["top"].set_visible(False)
@@ -453,10 +453,10 @@ ax13.barh(y_pos, 100*np.max(histories[models[5]],axis=0)[sorting_filter_nans], w
 ax13.barh(y_pos + width, 100*np.max(histories[models[6]], axis=0)[sorting_filter_nans], width,label=models[6],zorder=10)
 
 
-ax13.set_yticks(y_pos,people)
-ax13.set_title("Model comparison on IoU", fontweight="bold")
-ax13.set_xlabel("IoU %",fontsize=20)
-ax13.legend(loc='best')
+plt.yticks(y_pos,people)
+ax13.set_title("Model comparison on IoU")
+ax13.set_xlabel("IoU %")
+ax13.legend(loc='best',fontsize=7)
 
 
 #Beautify
@@ -464,7 +464,7 @@ ax13.spines["top"].set_visible(False)
 ax13.spines["bottom"].set_visible(False)
 ax13.spines["right"].set_visible(False)
 ax13.spines["left"].set_visible(False)
-ax.get_xaxis().tick_bottom()
+ax13.get_xaxis().tick_bottom()
 ax13.get_yaxis().tick_left()
 
 
