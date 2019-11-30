@@ -1,4 +1,3 @@
-
 from __future__ import print_function
 
 import torch
@@ -20,7 +19,6 @@ import time
 import sys
 import os
 
-
 n_class = 32
 
 batch_size = 5
@@ -33,8 +31,6 @@ step_size = 4
 gamma = 0.9
 
 train_vgg = True
-
-
 
 argv1 = 'CamVid'
 if argv1 == 'CamVid':
@@ -61,18 +57,10 @@ else:
 print("loading validation file from", val_file)
 val_loader = DataLoader(val_data, batch_size=1, num_workers=8)
 
-
-
-
-
-
-
-
-
 use_gpu = torch.cuda.is_available()
 
-def val(fcn_model, model):
 
+def val(fcn_model, model):
     fcn_model.eval()  # Deactivate dropout and batch normalization or inconsistent inference
 
     for iter, batch in enumerate(val_loader):
@@ -89,9 +77,8 @@ def val(fcn_model, model):
         pred = output.transpose(0, 2, 3, 1).reshape(-1, n_class).argmax(axis=1).reshape(N, h, w)
 
         target = batch['l'].cpu().numpy().reshape(N, h, w)
-        if iter%10 == 0:
+        if iter % 10 == 0:
             plot_pred(inputs, target, pred, iter, model)
-
 
 
 if __name__ == "__main__":
@@ -101,6 +88,7 @@ if __name__ == "__main__":
     for model in fold_list:
         if model[-4:] == 'FULL':
             print("Loading model " + model)
-            fcn_model = torch.load(os.path.join('models',model))
-            val(fcn_model)
+
+            fcn_model = torch.load(os.path.join('models', model))
+            val(fcn_model, model)
 
