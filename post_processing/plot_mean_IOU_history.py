@@ -3,13 +3,26 @@ import os
 import matplotlib.pyplot as plt
 
 from scipy.signal import lfilter
-
-def filter(params=(30,1), inp=np.zeros((100,1))):
+from scipy.signal import lfiltic
+def filter(params=(30,1), inp=np.zeros((100,1)),init=None):
     (n, a) = params
     # the larger n is, the smoother curve will be
     b = [1.0 / n] * n
-    return lfilter(b, a, inp)
+    if init is not None:
+        i = lfiltic(b,a,init,x=0)
+    else:
+        i = None
+    return lfilter(b, a, inp,zi=i)
 
+def smooth(x, window_len=11, window='hanning'):
+
+    s = np.r_[2 * x[0] - x[window_len - 1::-1], x, 2 * x[-1] - x[-1:-window_len:-1]]
+    if window == 'flat':  # moving average
+        w = np.ones(window_len, 'd')
+    else:
+        w = eval('np.' + window + '(window_len)')
+    y = np.convolve(w / w.sum(), s, mode='same')
+    return y[window_len:-window_len + 1]
 
 
 # Import labels
@@ -168,7 +181,7 @@ plt.barh(y_pos + width, 100*np.max(histories[models[6]], axis=0)[sorting_filter_
 
 
 plt.yticks(y_pos,people)
-ax.set_title("Model comparison on IoU", fontweight="bold")
+ax.set_title("Model comparison on IoU")
 ax.set_xlabel("IoU %",fontsize=20)
 ax.legend(loc='best')
 
@@ -269,7 +282,7 @@ for iter,mdl in enumerate(models):
     ax.plot(histories[mdl], label=mdl,zorder=10,linewidth=3)
 
 
-ax.set_title("Learning rate",fontsize=25)
+ax.set_title("Learning rate",fontsize=20)
 ax.set_xlabel("epoch",fontsize=15)
 ax.set_ylabel("lr",fontsize=15)
 
@@ -483,3 +496,61 @@ handles, labels = ax13.get_legend_handles_labels()
 
 plt.show()
 plt.close()
+
+
+
+# IoU
+histories = {}
+models = []
+for iter, item in enumerate(fold_list):
+    print(str(iter)+'. ' + item)
+
+    file_path = os.path.join(scores_dir, item, 'train_loss.npy')
+
+    which_model = item.partition("-")[0]
+    if item[-4:] == 'True': which_model = which_model + 'VGG_trained'
+    models.append(which_model)
+    hist = np.load(file_path)
+    hist = hist[:np.max(np.nonzero(hist))]
+    histories[which_model] = hist
+
+
+
+
+
+ax = plt.subplot(1,1,1)
+p = []
+for iter,mdl in enumerate(models):
+    if iter>0 and histories[mdl][-1]<0.8:
+        ax.plot(smooth(np.tanh(histories[mdl])), label=str(mdl),linewidth=4)
+
+
+# ax.plot(filter(inp=histories[models[3]]), label=str(3),linewidth=4)
+ax.set_title("Loss",fontsize=25)
+ax.set_xlabel("epoch",fontsize=20)
+ax.set_ylabel("tanh(loss)",fontsize=20)
+
+
+r1,r2 = ax.get_xlim()
+r = (int(r1), int(r2))
+
+y1,y2 = ax.get_ylim()
+yy = (int(y1*100),int(y2*100))
+for y in range(yy[0], yy[1], 10):
+    ax.plot(range(*r), [y/100] * len(range(*r)), "--", lw=0.5, color="black", alpha=0.3)
+
+
+ax.legend(loc='best')
+
+#Beautify
+ax.spines["top"].set_visible(False)
+ax.spines["bottom"].set_visible(False)
+ax.spines["right"].set_visible(False)
+ax.spines["left"].set_visible(False)
+ax.get_xaxis().tick_bottom()
+ax.get_yaxis().tick_left()
+
+plt.savefig(os.path.join("files","loss.pdf"), bbox_inches="tight")
+plt.show()
+plt.close()
+
