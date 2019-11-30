@@ -101,6 +101,6 @@ if __name__ == "__main__":
     for model in fold_list:
         if model[-4:] == 'FULL':
             print("Loading model " + model)
-            fcn_model = torch.load(model)
+            fcn_model = torch.load(os.path.join('models',model))
             val(fcn_model)
 
