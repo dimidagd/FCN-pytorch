@@ -40,8 +40,11 @@ models = []
 histories = {}
 for iter, item in enumerate(fold_list):
     print(str(iter)+'. ' + item)
+
     file_path = os.path.join(scores_dir, item, 'meanIU.npy')
+
     which_model = item.partition("-")[0]
+    if item[-4:] == 'True': which_model = which_model + 'VGG_trained'
     models.append(which_model)
     hist = np.load(file_path)
     hist = hist[:np.max(np.nonzero(hist)), :]
@@ -54,13 +57,14 @@ for iter, item in enumerate(fold_list):
 
 
 
-which_model = models[0]
+which_model = models[3]
 hist = histories[which_model]
 
 ax = plt.subplot(1,1,1)
 p = []
+colors = np.array(list(color2label.keys()))/255
 for iter,cl in enumerate(classes):
-    plt.plot(100*filter(inp=hist[:,cl]), label=str(cl))
+    plt.plot(100*filter(inp=hist[:,cl]), label=str(cl),color=colors[cl])
 ax.set_title(which_model+ " class IoU", fontweight="bold")
 ax.set_xlabel("epoch")
 ax.set_ylabel("IoU %")
@@ -141,21 +145,29 @@ plt.close()
 width = 0.2
 plt.rcdefaults()
 fig, ax = plt.subplots(figsize=(5, 10))
+
 people = np.array(list(label2color.keys()))[sorting]
 colors = np.array(list(color2label.keys()))[sorting]/255
+
+
+people = people[filter_empty_nan]
+colors = colors[filter_empty_nan]
+
+sorting_filter_nans = (sorting * filter_empty_nan)[sorting * filter_empty_nan > 0]
 y_pos = np.arange(len(people))
 
 
 
+plt.barh(y_pos - width, 100*np.max(histories[models[3]], axis=0)[sorting_filter_nans], width, label=models[3],zorder=10)
+plt.barh(y_pos, 100*np.max(histories[models[5]],axis=0)[sorting_filter_nans], width, label=models[5],zorder=10)
+plt.barh(y_pos + width, 100*np.max(histories[models[6]], axis=0)[sorting_filter_nans], width,label=models[6],zorder=10)
 
-plt.barh(y_pos, 100*np.max(histories[models[0]],axis=0)[sorting], width, label=models[0],zorder=10)
-plt.barh(y_pos + width, 100*np.max(histories[models[1]], axis=0)[sorting], width,label=models[1],zorder=10)
-plt.barh(y_pos - width, 100*np.max(histories[models[2]], axis=0)[sorting], width, label=models[2],zorder=10)
 
 plt.yticks(y_pos,people)
 ax.set_title("Model comparison on IoU", fontweight="bold")
 ax.set_xlabel("IoU %")
 plt.legend(loc='best')
+
 
 #Beautify
 ax.spines["top"].set_visible(False)
@@ -174,6 +186,9 @@ for y in range(1, 90, 10):
 
 ax.invert_yaxis()  # labels read top-to-bottom
 
+handles, labels = ax.get_legend_handles_labels()
+# ax.legend(reversed(handles), reversed(labels), title='Models', loc='best')
+
 plt.savefig(os.path.join("files","All_models_IoU_classes_comparison.pdf"), bbox_inches="tight")
 plt.show()
 plt.close()
@@ -185,7 +200,9 @@ models = []
 for iter, item in enumerate(fold_list):
     # print(str(iter)+'. ' + item)
     file_path = os.path.join(scores_dir, item, 'meanPixel.npy')
+
     which_model = item.partition("-")[0]
+    if item[-4:] == 'True': which_model = which_model + 'VGGtrained'
     models.append(which_model)
     hist = np.load(file_path)
     hist = hist[:np.max(np.nonzero(hist))]  # Crop until trained epoch
@@ -196,19 +213,13 @@ for iter, item in enumerate(fold_list):
 ax = plt.subplot(1,1,1)
 p = []
 for iter,mdl in enumerate(models):
-    plt.plot(100*filter(inp=histories[mdl]), label=str(mdl))
+    if histories[mdl][-1]> 0.4:
+        plt.plot(100 * filter(inp=histories[mdl]), label=str(mdl))
+
 ax.set_title("Model pixel accuracy", fontweight="bold")
 ax.set_xlabel("epoch")
 ax.set_ylabel("Px accuracy %")
 
-
-#Beautify
-ax.spines["top"].set_visible(False)
-ax.spines["bottom"].set_visible(False)
-ax.spines["right"].set_visible(False)
-ax.spines["left"].set_visible(False)
-ax.get_xaxis().tick_bottom()
-ax.get_yaxis().tick_left()
 
 r1,r2 = plt.xlim()
 r = (int(r1), int(r2))
@@ -231,22 +242,21 @@ plt.show()
 plt.close()
 
 
-#Plot learning rate
 
-
-
-
-# Pixel accuracy training
+# Learning rate
 histories = {}
 models = []
 for iter, item in enumerate(fold_list):
     # print(str(iter)+'. ' + item)
     file_path = os.path.join(scores_dir, item, 'learning_rate.npy')
+    file_path2 = os.path.join(scores_dir, item, 'meanPixel.npy')
+    check_if_good_one = np.load(file_path2)
     which_model = item.partition("-")[0]
-    models.append(which_model)
-    hist = np.load(file_path)
-    hist = hist[:np.max(np.nonzero(hist))]  # Crop until trained epoch
-    histories[which_model] = hist
+    if not item[-4:] == 'True':
+        models.append(which_model)
+        hist = np.load(file_path)
+        hist = hist[:np.max(np.nonzero(hist))]  # Crop until trained epoch
+        histories[which_model] = hist
 
 
 ax = plt.subplot(1,1,1)
