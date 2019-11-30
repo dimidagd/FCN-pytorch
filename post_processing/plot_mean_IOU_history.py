@@ -332,7 +332,7 @@ for iter, item in enumerate(fold_list):
 
 p = []
 for iter,mdl in enumerate(models):
-    ax11.plot(histories[mdl], label=mdl,zorder=10,linewidth=3)
+    ax11.plot(histories[mdl], label=mdl,zorder=10,linewidth=2)
 
 
 ax11.set_title("Learning rate",fontsize=10)
@@ -381,7 +381,7 @@ for iter, item in enumerate(fold_list):
 p = []
 for iter,mdl in enumerate(models):
     if histories[mdl][-1]> 0.4:
-        ax12.plot(100 * filter(inp=histories[mdl]), label=str(mdl),linewidth=4)
+        ax12.plot(100 * filter(inp=histories[mdl]), label=str(mdl),linewidth=2)
 
 ax12.set_title("Model pixel accuracy", fontweight="bold")
 ax12.set_xlabel("epoch")
@@ -392,7 +392,7 @@ ax12.set_ylabel("Pixel accuracy %")
 r1,r2 = ax12.get_xlim()
 r = (int(r1), int(r2))
 
-r1y, r2y = ax11.get_ylim()
+r1y, r2y = ax12.get_ylim()
 
 for y in list(ax11.get_yticks()[1:-1]):
     ax12.plot(range(*r), [y] * len(range(*r)), "--", lw=0.5, color="black", alpha=0.3,zorder=1)
@@ -410,6 +410,74 @@ ax12.get_xaxis().tick_bottom()
 ax12.get_yaxis().tick_left()
 
 
+
+
+
+#Combined bar chart
+
+
+# IoU
+histories = {}
+models = []
+for iter, item in enumerate(fold_list):
+    print(str(iter)+'. ' + item)
+
+    file_path = os.path.join(scores_dir, item, 'meanIU.npy')
+
+    which_model = item.partition("-")[0]
+    if item[-4:] == 'True': which_model = which_model + 'VGG_trained'
+    models.append(which_model)
+    hist = np.load(file_path)
+    hist = hist[:np.max(np.nonzero(hist)), :]
+    histories[which_model] = hist
+
+
+width = 0.2
+
+# fig, ax = plt.subplots(figsize=(5, 10))
+
+people = np.array(list(label2color.keys()))[sorting]
+colors = np.array(list(color2label.keys()))[sorting]/255
+
+
+people = people[filter_empty_nan]
+colors = colors[filter_empty_nan]
+
+sorting_filter_nans = (sorting * filter_empty_nan)[sorting * filter_empty_nan > 0]
+y_pos = np.arange(len(people))
+
+
+
+ax13.barh(y_pos - width, 100*np.max(histories[models[3]], axis=0)[sorting_filter_nans], width, label=models[3],zorder=10)
+ax13.barh(y_pos, 100*np.max(histories[models[5]],axis=0)[sorting_filter_nans], width, label=models[5],zorder=10)
+ax13.barh(y_pos + width, 100*np.max(histories[models[6]], axis=0)[sorting_filter_nans], width,label=models[6],zorder=10)
+
+
+ax13.set_yticks(y_pos,people)
+ax13.set_title("Model comparison on IoU", fontweight="bold")
+ax13.set_xlabel("IoU %",fontsize=20)
+ax13.legend(loc='best')
+
+
+#Beautify
+ax13.spines["top"].set_visible(False)
+ax13.spines["bottom"].set_visible(False)
+ax13.spines["right"].set_visible(False)
+ax13.spines["left"].set_visible(False)
+ax.get_xaxis().tick_bottom()
+ax13.get_yaxis().tick_left()
+
+
+
+r1,r2 = ax13.get_ylim()
+r = (int(r1-0.5), int(r2+0.5))
+for y in range(1, 90, 10):
+    ax13.plot([y] * len(range(*r)),range(*r), "--", lw=0.5, color="black", alpha=0.3,zorder=1)
+
+ax13.invert_yaxis()  # labels read top-to-bottom
+
+handles, labels = ax13.get_legend_handles_labels()
+# ax.legend(reversed(handles), reversed(labels), title='Models', loc='best')
 
 
 
