@@ -79,8 +79,8 @@ p = []
 colors = np.array(list(color2label.keys()))/255
 for iter,cl in enumerate(classes):
     data = 100*filter(inp=hist[:,cl])
-
-    ax1.plot(data, label=str(cl),color=colors[cl],linewidth=6)
+    if np.max(data)>1:
+        ax1.plot(data, label=str(cl),color=colors[cl],linewidth=6)
 ax1.set_title("Training",fontsize=30)
 ax1.set_xlabel("epoch",fontsize=30)
 ax1.set_ylabel("IoU %",fontsize=30)
