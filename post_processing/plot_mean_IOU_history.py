@@ -313,7 +313,7 @@ plt.close()
 
 # Combine last 3 =====================
 
-fig1 = plt.figure()
+fig1 = plt.figure(figsize=(27, 20))
 # fig2 = plt.figure()  # more figures are easily accessible
 # fig3 = plt.figure()  # more figures are easily accessible
 
@@ -494,6 +494,7 @@ handles, labels = ax13.get_legend_handles_labels()
 
 
 
+plt.savefig(os.path.join("files","combined3.pdf"), bbox_inches="tight")
 plt.show()
 plt.close()
 
