@@ -11,7 +11,7 @@
 <img align='center' style="border-color:gray;border-width:2px;border-style:dashed"   src='result1.png' padding='5px' height="150px"></img>
 
 ### Sub-models performance
-<img align='center' style="border-color:gray;border-width:2px;border-style:dashed"   src='result2.png' padding='5px' height="250px"></img>
+<img align='center'   src='result2.png' padding='5px' width="250px"></img>
 
 
 ## Performance
