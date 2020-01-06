@@ -53,7 +53,7 @@ python3 python/train.py CityScapes
 
 # Developed for Deep learning course / Denmark's Technical University / Fall 2019
 
-###Developers 
+### Students
 Dimitrios Dagdilelis / [@dimidagd](https://dimidagd.github.io/) 
 
 Mitul Vekariya
