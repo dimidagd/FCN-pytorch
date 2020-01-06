@@ -10,13 +10,13 @@
 ### Trials
 <img align='center' style="border-color:gray;border-width:2px;border-style:dashed"   src='result1.png' padding='5px' height="150px"></img>
 
-### Training Procedures
+### Sub-models performance
 <img align='center' style="border-color:gray;border-width:2px;border-style:dashed"   src='result2.png' padding='5px' height="150px"></img>
 
 
 ## Performance
 
-I train with two popular benchmark dataset: CamVid and Cityscapes
+Trained with two popular benchmark dataset: CamVid and Cityscapes
 
 |dataset|n_class|pixel accuracy|
 |---|---|---
@@ -51,12 +51,6 @@ python3 python/CityScapes_utils.py
 python3 python/train.py CityScapes
 ```
 
-## Author
-Po-Chih Huang / [@pochih](https://pochih.github.io/)
-
-
-## Fork material
-
 # Developed for Deep learning course / Denmark's Technical University / Fall 2019
 
 ###Developers 
@@ -64,10 +58,15 @@ Dimitrios Dagdilelis / [@dimidagd](https://dimidagd.github.io/)
 
 Mitul Vekariya
 
-https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/image_segmentation.html
+
+
+## Inspired by
+Po-Chih Huang / [@pochih](https://pochih.github.io/)
+
+
+
 
 ### Known issues
-- Validation accuracy high when continuing training, but next epoch loss sucks.
 - Imbalanced classes in the dataset, (small objects have less pixels), need to balance the loss function, [possible solution](https://medium.com/@First350/tensorflow-dealing-with-imbalanced-data-eb0108b10701)
 or [here](https://www.jeremyjordan.me/semantic-segmentation/)
 
