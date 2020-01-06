@@ -8,10 +8,10 @@
 
 ## Results
 ### Trials
-<img align='center' style="border-color:gray;border-width:2px;border-style:dashed"   src='result/trials.png' padding='5px' height="150px"></img>
+<img align='center' style="border-color:gray;border-width:2px;border-style:dashed"   src='result1.png' padding='5px' height="150px"></img>
 
 ### Training Procedures
-<img align='center' style="border-color:gray;border-width:2px;border-style:dashed"   src='result/result.gif' padding='5px' height="150px"></img>
+<img align='center' style="border-color:gray;border-width:2px;border-style:dashed"   src='result2.png' padding='5px' height="150px"></img>
 
 
 ## Performance
